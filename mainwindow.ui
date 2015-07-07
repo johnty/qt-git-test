@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButtonDir">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -24,23 +24,30 @@
      </rect>
     </property>
     <property name="text">
-     <string>Get Curr Dir</string>
+     <string>set dir</string>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="plainTextEdit">
+   <widget class="QLineEdit" name="textRepoLocation">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
+      <y>120</y>
       <width>231</width>
-      <height>21</height>
+      <height>27</height>
      </rect>
     </property>
-    <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
+   </widget>
+   <widget class="QPushButton" name="pushButtonInit">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>160</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
     </property>
-    <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
+    <property name="text">
+     <string>init repo</string>
     </property>
    </widget>
   </widget>
@@ -50,7 +57,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

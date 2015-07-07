@@ -16,10 +16,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButtonDir_clicked();
+
+    void on_pushButtonInit_clicked();
 
 private:
     Ui::MainWindow *ui;
+    bool hasDir;
 };
 
 #endif // MAINWINDOW_H
