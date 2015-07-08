@@ -2,10 +2,27 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "git2.h"
+
 
 namespace Ui {
 class MainWindow;
 }
+
+
+
+enum print_options {
+    SKIP = 1,
+    VERBOSE = 2,
+    UPDATE = 4,
+};
+
+
+struct print_payload {
+    enum print_options options;
+    git_repository *repo;
+};
+
 
 class MainWindow : public QMainWindow
 {
@@ -20,8 +37,14 @@ private slots:
 
     void on_pushButtonInit_clicked();
 
+    void on_pushButtonCommit_clicked();
+
+    void on_pushButtonLoad_clicked();
+
 private:
     Ui::MainWindow *ui;
+    git_repository* repo;
+    git_index* index;
     bool hasDir;
 };
 
