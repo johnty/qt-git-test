@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     git_libgit2_init();
     hasDir = false;
     git_repository* repo = NULL;
+
+    ui->pushButtonInit->setDisabled(true); //don't allow init on start
 }
 
 MainWindow::~MainWindow()
@@ -37,8 +40,42 @@ void MainWindow::on_pushButtonDir_clicked()
         ui->textRepoLocation->setText(mypath);
         hasDir = true;
         const char* repo_dir = ui->textRepoLocation->text().toStdString().c_str();
-        int ret = git_repository_open(&repo, repo_dir);
-        printf("repo opened\n");
+
+
+        if (git_repository_open_ext(
+                    NULL, repo_dir, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0)
+        {
+
+            //!!!! so apparently the repo_dir value gets changed
+            //! when you call open above to check things: .git gets appended to it, so ...
+            //! this is ugly sandbox code anyway...
+
+            repo_dir = ui->textRepoLocation->text().toStdString().c_str();
+            int ret = git_repository_open(&repo, repo_dir);
+
+            qDebug() << "opening existing repo at " << ui->textRepoLocation->text() << "ret = " << ret;
+
+            ui->pushButtonInit->setDisabled(true);
+
+            //load em tags
+
+            git_strarray tags = {0};
+            int error = git_tag_list(&tags, repo);
+            qDebug() <<"found numTags =" <<tags.count;
+            if (error == 0) {
+                QString text_str;
+                for (int i=0; i<tags.count; i++) {
+                    text_str+=tags.strings[i];
+                    text_str+="\n";
+                    ui->listRevisions->addItem(tags.strings[i]);
+                }
+            }
+
+        }
+        else {
+            ui->pushButtonInit->setEnabled(true);
+        }
+
     }
 }
 
@@ -69,6 +106,8 @@ void MainWindow::on_pushButtonCommit_clicked()
             QTextStream out(&myfile);
             out << ui->textContent->toPlainText();
         }
+
+        //add to index
         git_strarray array = {0};
         git_index* index;
         struct print_payload payload;
@@ -78,6 +117,10 @@ void MainWindow::on_pushButtonCommit_clicked()
         git_index_write(index);
 
         git_index_free(index);
+
+        //do commit
+
+
         QMessageBox::information(this, tr("commit"), tr("commit successful"));
     }
 }
@@ -93,4 +136,14 @@ void MainWindow::on_pushButtonLoad_clicked()
         data.append(s1.readAll());
         ui->textContent->setText(data);
     }
+}
+
+void MainWindow::on_pushButtonSave_clicked()
+{
+
+}
+
+void MainWindow::on_listRevisions_clicked(const QModelIndex &index)
+{
+
 }

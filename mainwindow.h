@@ -41,6 +41,10 @@ private slots:
 
     void on_pushButtonLoad_clicked();
 
+    void on_pushButtonSave_clicked();
+
+    void on_listRevisions_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     git_repository* repo;
