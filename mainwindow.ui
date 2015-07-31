@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>set repo dir</string>
+     <string>Set Repo Dir</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="textRepoLocation">
@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>init repo</string>
+     <string>Init Repo</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="textContent">
@@ -67,7 +67,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>180</y>
+      <y>110</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -79,8 +79,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>30</y>
+      <x>420</x>
+      <y>60</y>
       <width>67</width>
       <height>17</height>
      </rect>
@@ -118,11 +118,83 @@
    <widget class="QListWidget" name="listRevisions">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>50</y>
+      <x>420</x>
+      <y>80</y>
       <width>161</width>
       <height>271</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textTagName">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>200</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textTagAnno">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>250</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>180</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tag Name</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>230</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tag Annotation</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonTag">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>310</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tag</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonLoadRev">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>360</y>
+      <width>81</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load Rev</string>
     </property>
    </widget>
   </widget>
