@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
+    <width>676</width>
     <height>456</height>
    </rect>
   </property>
@@ -86,7 +86,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Revisions</string>
+     <string>Tags</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonLoad">
@@ -120,7 +120,7 @@
      <rect>
       <x>420</x>
       <y>80</y>
-      <width>161</width>
+      <width>111</width>
       <height>271</height>
      </rect>
     </property>
@@ -187,14 +187,37 @@
    <widget class="QPushButton" name="pushButtonLoadRev">
     <property name="geometry">
      <rect>
-      <x>500</x>
+      <x>450</x>
       <y>360</y>
       <width>81</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>Load Rev</string>
+     <string>Load Tag</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listRevisions_2">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>80</y>
+      <width>111</width>
+      <height>271</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>60</y>
+      <width>67</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Commits</string>
     </property>
    </widget>
   </widget>
@@ -203,7 +226,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>590</width>
+     <width>676</width>
      <height>23</height>
     </rect>
    </property>

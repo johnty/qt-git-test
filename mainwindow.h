@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <vector>
 #include "git2.h"
 
 
@@ -49,11 +50,18 @@ private slots:
 
     void on_pushButtonLoadRev_clicked();
 
+    bool getParentCommit(git_commit* commit);
+
 private:
     Ui::MainWindow *ui;
     git_repository* repo;
     git_index* index;
     bool hasDir;
+
+    std::vector<const git_oid*> commitIDs;
+
+    void lookupCommits();
+    bool lookupDone;
 };
 
 #endif // MAINWINDOW_H

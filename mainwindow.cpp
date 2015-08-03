@@ -72,6 +72,10 @@ void MainWindow::on_pushButtonDir_clicked()
                 }
             }
 
+            //look up commit info
+
+            lookupCommits();
+
         }
         else {
             ui->pushButtonInit->setEnabled(true);
@@ -116,13 +120,69 @@ void MainWindow::on_pushButtonCommit_clicked()
         git_index_add_all(index, &array, 0, NULL, &payload);
 
         git_index_write(index);
+        //note2self: the above simply writes
 
-        git_index_free(index);
+        //now, do a commit!
+
+
+        //random: list references
+        git_strarray refs = {0};
+        int error = git_reference_list(&refs, repo);
+        for (int i=0; i<refs.count; i++)
+        {
+            qDebug() << "ref " <<i<<" = "<< refs.strings[i];
+        }
+        //end random: list references
+
+        //for a commit, we need:
+        // -repo (obviously)
+        // - name of ref (usually "HEAD")
+        // - author commiter sig
+        // - encoding+ message
+        // - root tree (pointer
+        // - parent count+parents (why? can have multiple parents)
+
+        git_tree *tree;
+        git_oid tree_id, parent_id, commit_id;
+
+
+
+        error = git_index_write_tree(&tree_id, index); //we need to put index into a tree object for commit
+        error = git_tree_lookup(&tree, repo, &tree_id);
+
+        //tree_id = *git_object_id((git_object*)tree);
+        git_commit *parent;
+
+        //get HEAD and use it as parent of commit, put it in parent
+        error  = git_reference_name_to_id(&parent_id, repo, "HEAD");
+        error = git_commit_lookup(&parent, repo, &parent_id);
+
 
         //do commit
+        git_signature* sig;
+        git_signature_now(&sig, "johnty", "info@johnty.ca");
+
+        const char* msg = "Test Commit Message";
+
+        git_commit_create_v(
+                    &commit_id,
+                    repo,
+                    "HEAD",
+                    sig,
+                    sig,
+                    NULL,
+                    msg,
+                    tree,
+                    1,
+                    parent
+                    );
 
 
-        QMessageBox::information(this, tr("commit"), tr("commit successful"));
+        git_index_free(index);
+        git_signature_free(sig);
+        git_tree_free(tree);
+        git_commit_free(parent);
+        //QMessageBox::information(this, tr("commit"), tr("commit successful"));
     }
 }
 
@@ -200,5 +260,73 @@ void MainWindow::on_pushButtonLoadRev_clicked()
             git_tag_free(tag);
             git_reference_free(ref);
         }
+    }
+}
+
+void MainWindow::lookupCommits()
+{
+    if (repo != NULL)
+    {
+        git_oid parent_id;
+        git_commit* commit;
+
+        //get the head commit ID
+        int error  = git_reference_name_to_id(&parent_id, repo, "HEAD");
+
+        //get the actual commit object
+        error = git_commit_lookup(&commit, repo, &parent_id);
+
+        qDebug() << "Head commit = " << git_commit_message(commit);
+
+        unsigned int count = git_commit_parentcount(commit);
+        qDebug() << "numParents = " << count;
+
+        commitIDs.clear();
+
+        lookupDone = false;
+        getParentCommit(commit);
+
+        return;
+
+        //TODO: remove the rest...
+        for (unsigned int i=0; i<count; i++) {
+            const git_oid *nth_parent_id = git_commit_parent_id(commit,i);
+            git_commit *nth_parent = NULL;
+            error = git_commit_parent(&nth_parent, commit, i);
+            qDebug() << "Parent " <<i<<" msg = "<< git_commit_message(nth_parent);
+            if (git_commit_parentcount(nth_parent)>0)
+            {
+                git_commit *pparent = NULL;
+                error = git_commit_parent(&pparent, nth_parent, 0);
+                qDebug() << "pParent msg = " << git_commit_message(pparent);
+                git_commit_free(pparent);
+            }
+            git_commit_free(nth_parent);
+        }
+
+        git_commit_free(commit);
+    }
+}
+
+
+//recursively fills the vector of commitIDs by going up the
+// tree. assumes single ancestory with no multiple parents (merges).
+// for better implementation see log.c in the libgit2 examples folder...
+bool MainWindow::getParentCommit(git_commit* commit)
+{
+
+    if (git_commit_parentcount(commit)>=0 && !lookupDone)
+    {
+        git_commit* parent;
+        int error = git_commit_parent(&parent, commit, 0);
+        const git_oid* commit_id = git_commit_id(parent);
+        commitIDs.push_back(commit_id);
+        qDebug() << " added to vector: " << git_commit_id(parent);
+        getParentCommit(parent);
+        git_commit_free(parent);
+    }
+    else
+    {
+        lookupDone = true;
     }
 }
