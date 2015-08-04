@@ -284,49 +284,38 @@ void MainWindow::lookupCommits()
         commitIDs.clear();
 
         lookupDone = false;
-        getParentCommit(commit);
 
-        return;
+        walkHistory(commit);
 
-        //TODO: remove the rest...
-        for (unsigned int i=0; i<count; i++) {
-            const git_oid *nth_parent_id = git_commit_parent_id(commit,i);
-            git_commit *nth_parent = NULL;
-            error = git_commit_parent(&nth_parent, commit, i);
-            qDebug() << "Parent " <<i<<" msg = "<< git_commit_message(nth_parent);
-            if (git_commit_parentcount(nth_parent)>0)
-            {
-                git_commit *pparent = NULL;
-                error = git_commit_parent(&pparent, nth_parent, 0);
-                qDebug() << "pParent msg = " << git_commit_message(pparent);
-                git_commit_free(pparent);
-            }
-            git_commit_free(nth_parent);
-        }
 
-        git_commit_free(commit);
     }
 }
 
 
-//recursively fills the vector of commitIDs by going up the
-// tree. assumes single ancestory with no multiple parents (merges).
-// for better implementation see log.c in the libgit2 examples folder...
-bool MainWindow::getParentCommit(git_commit* commit)
+//go through history using the revwalker object
+bool MainWindow::walkHistory(git_commit* commit)
 {
+    git_commit* wcommit;
+    const char* cmsg;
+    const git_oid* oid = git_commit_id(commit);
 
-    if (git_commit_parentcount(commit)>=0 && !lookupDone)
+    git_oid commit_oid;
+    git_oid_cpy(&commit_oid, oid);
+
+    git_revwalk* walker;
+
+    git_revwalk_new(&walker, repo);
+    git_revwalk_sorting(walker, GIT_SORT_TOPOLOGICAL | GIT_SORT_TIME);
+    git_revwalk_push(walker, &commit_oid);
+
+    while (git_revwalk_next(&commit_oid, walker) == 0)
     {
-        git_commit* parent;
-        int error = git_commit_parent(&parent, commit, 0);
-        const git_oid* commit_id = git_commit_id(parent);
-        commitIDs.push_back(commit_id);
-        qDebug() << " added to vector: " << git_commit_id(parent);
-        getParentCommit(parent);
-        git_commit_free(parent);
+        int error = git_commit_lookup(&wcommit, repo, &commit_oid);
+
+        cmsg  = git_commit_message(wcommit);
+        qDebug() << "Commit msg = " << cmsg;
+        git_commit_free(wcommit);
     }
-    else
-    {
-        lookupDone = true;
-    }
+    git_revwalk_free(walker);
+
 }

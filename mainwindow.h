@@ -50,7 +50,7 @@ private slots:
 
     void on_pushButtonLoadRev_clicked();
 
-    bool getParentCommit(git_commit* commit);
+    bool walkHistory(git_commit* commit);
 
 private:
     Ui::MainWindow *ui;
